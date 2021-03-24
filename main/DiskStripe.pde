@@ -7,6 +7,7 @@ public class	DiskStripe implements Drawable {
 	private float[]		circleRay; // rayon des cercles
 	private float[]		circleAngle; // angle des rayures au seins d'un cercle
 	private color[]		circleColor; // couleur à atteindre pour l'extérieur du cercle
+	private PVector[][]	points;
 	
 	// Custructor
 	public	DiskStripe() {
@@ -21,36 +22,35 @@ public class	DiskStripe implements Drawable {
 		this.circleRay = _circleRay;
 		this.circleAngle = _circleAngle;
 		this.circleColor = _circleColor;
+		
+		this.getPoints();
 	}
 	
 	// Private methods
 	
-	private PVector[][]	getPoints() {
-		PVector[][]	result = new PVector[this.nbCircle][this.nbStripe * 2];
+	private void	getPoints() {
+		this.points = new PVector[this.nbCircle][this.nbStripe * 2];
 		float	stepAngle = TWO_PI / nbStripe;
 		float	stripeAngle = stepAngle * prctStripe;
 
 		for (int i = 0; i < this.nbCircle; i++) {
 			for (int j = 0; j < this.nbStripe; j++) {
 				// printf(i, j, circleCenter[i], circleRay[i], stepAngle, circleAngle[i], stripeAngle);
-				result[i][2 * j] = pol2cart(circleCenter[i], circleRay[i], j * stepAngle + circleAngle[i]);
-				result[i][2 * j + 1] = pol2cart(circleCenter[i], circleRay[i], j * stepAngle + circleAngle[i] + stripeAngle);
+				this.points[i][2 * j] = pol2cart(circleCenter[i], circleRay[i], j * stepAngle + circleAngle[i]);
+				this.points[i][2 * j + 1] = pol2cart(circleCenter[i], circleRay[i], j * stepAngle + circleAngle[i] + stripeAngle);
 			}
 		}
-		return (result);
 	}
 
 	// Public methods
 	public void	draw() {
-		PVector[][] points = this.getPoints();
-
 		for (int i = 0; i < nbCircle - 1; i++) {
 			for (int j = 0; j < nbStripe; j++) {
 				beginShape();
-				vertex(points[i][2 * j]);
-				vertex(points[i + 1][2 * j]);
-				vertex(points[i + 1][2 * j + 1]);
-				vertex(points[i][2 * j + 1]);
+				vertex(this.points[i][2 * j]);
+				vertex(this.points[i + 1][2 * j]);
+				vertex(this.points[i + 1][2 * j + 1]);
+				vertex(this.points[i][2 * j + 1]);
 				endShape(CLOSE);
 			}
 		}
