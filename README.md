@@ -1,4 +1,6 @@
-# explications générales
+Projet réalisé par RIALLOT JOLAN et DUONG ANTOINE.
+
+# Explications générales
 
  - Une fois le programme lancé, il suffit d'intéragir en cliquant avec la souris ou pressant une touche du clavier pour que l'affichage commence.
  - Le programme commence par afficher Sierpinsky3D.
@@ -7,7 +9,7 @@
  - Pour quiter le menu il suffit d'appuyer sur "p" ou "entrer"
  - Les couleurs sont représenter HSB 200 dans les paramètres
 
-## sélection des valeurs
+## Sélection des valeurs
  Dans le menu, cliquer sur une valeur ouvre une zone de texte qui accepte les formats "\^[0-9]\*$" pour les valeurs numérique et "\^[0-9]\*[, ][0-9]\*[, ][0-9]\*" pour les couleurs.
 
  Cette valeur est saisissable au clavier, seuls les caractères autorisés seront ajoutés.
