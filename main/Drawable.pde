@@ -1,6 +1,6 @@
 public abstract class Drawable {
 	abstract protected void	_clic(float x, float y);
-	abstract protected void	_scroll(float val);
+	abstract protected void	_scroll(int x, int y, float val);
 	abstract protected void	_key(char c);
 	abstract protected void	refresh();
 	abstract protected void	setSetup();
@@ -15,7 +15,7 @@ public abstract class Drawable {
 				this._clic(x, y);
 				break;
 			case SCROLL :
-				this._scroll(val);
+				this._scroll(x, y, val);
 				break;
 			case KEY :
 				this._key(c);

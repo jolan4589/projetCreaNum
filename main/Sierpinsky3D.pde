@@ -1,6 +1,6 @@
   public class	Sierpinsky3D extends Drawable {
 	
-	private int		nbIte;			 // nombre de recursions, 0 -> 1 pyramide, 1 -> 4 pyramides, ...
+	private int		nbIte;			 // nombre de recursions positif ou nul, 0 -> 1 pyramide, 1 -> 4 pyramides, ...
 	private int		_posInAllTab;	// position, dans le tableau général, de la pyramide en construction
 	private float	size;			// taille des aretes
 	private float	_h;				// hauteur entre la base et le sommet de la pyramide principale
@@ -12,7 +12,7 @@
 	// Custructor
 
 	public	Sierpinsky3D() {
-		build(5, 200, randomColor(), randomColor(), randomColor(), randomColor());
+		build(2, 200, randomColor(), randomColor(), randomColor(), randomColor());
 	}
 
 	// Private methods
@@ -89,7 +89,7 @@
 	}
 
 	/**
-	 *	Procédure indiquant si le clic est au dessus d'un paramètre, si oui elle indique quel paramètre
+	 *	Procédure indiquant si le clic est au dessus d'un paramètre, si oui elle indique quel paramètre.
 	 *	numérotation des variables :
 	 *	1	2
 	 *	3	4
@@ -107,8 +107,10 @@
 				if (x >= (2 * j + 1) * nx - nx2 && x <= (2 * j + 1) * nx + nx2)
 					if (y >= (2 * i + 1) * ny - nx2 && y <= (2 * i + 1) * ny + nx2) {
 						setupSelector = i * 2 + j;
-						if (setupSelector >= 2)
+						if (setupSelector >= 2) {
 							selecMode = selectorMode.COLOR;
+							valueSelector = color2string(startCOLORS[setupSelector - 2]);
+						}
 						else
 							selecMode = selectorMode.NUMBER;
 						return ;
@@ -116,20 +118,7 @@
 			}
 		}
 		setupSelector = -1;
-	}
-
-	/**
-	 *	Procédure mettant à jour pgGraspCalc();
-	 */
-	private void	setGraspCalc() {
-		pgGraspCalc.beginDraw();
-		pgGraspCalc.clear();
-		pgGraspCalc.fill(BLACK);
-		pgGraspCalc.background(WHITE);
-		pgGraspCalc.textSize(16);
-		pgGraspCalc.textAlign(CENTER, CENTER);
-		pgGraspCalc.text(valueSelector, pgGraspCalc.width / 2, pgGraspCalc.height / 2);
-		pgGraspCalc.endDraw();
+		valueSelector = "";
 	}
 
 	// Public methods
@@ -144,16 +133,19 @@
 		}
 	}
 
+	/**
+	 *	Procédure affichant le menu de Sierpinsky
+	 */
 	public void	printSetup() {
 		float nx = width / 4, ny = height / 6;
 		this.setSetup(); // mise à jour du graphique
 
 		if (sState == State.CLICKED) {
 			pgGraspCalc = createGraphics(width, height/5);
-			this.setGraspCalc();
-			pgCalc.blend(pgGraspCalc, 0,0, pgGraspCalc.width,pgGraspCalc.height, 0, (pgCalc.height / 2) - (pgGraspCalc.height / 2), pgCalc.width, pgCalc.height/5, ADD);
+			setGraspCalc();
+			pgCalc.blend(pgGraspCalc, 0,0, pgGraspCalc.width,pgGraspCalc.height, 0, (pgCalc.height / 2) - (pgGraspCalc.height / 2), pgCalc.width, pgCalc.height/5, BLEND);
 		}
-		blend(pgCalc, 0,0, pgCalc.width,pgCalc.height, 0,0, width,height, ADD);
+		blend(pgCalc, 0,0, pgCalc.width,pgCalc.height, 0,0, width,height, BLEND);
 	}
 
 	
@@ -183,6 +175,9 @@
 		this.findSierpinsky3DPoints(this._startPTS, this.nbIte);
 	}
 
+	/**
+	 * Procédure mettant a jour l'affichage du menu
+	 */
 	protected void	setSetup() {
 		float nx = pgCalc.width / 4, ny = pgCalc.height / 6;
 
@@ -266,7 +261,7 @@
 	}
 
 	/*
-	 *	Procédure d'intéraction au clic, uniquement utilisé si sState vaut SETUP.
+	 *	Procédure d'intéraction au clic, uniquement utilisé si sState vaut SETUP ou CLICKED
 	 *
 	 *	in
 	 * x, y	: posittion x et y de la souris
@@ -274,7 +269,10 @@
 	protected void	_clic(float x, float y) {
 		switch (sState) {
 			case CLICKED :
+				if (inGraspBox(x, y))
+					this.saveValue();
 				sState = State.SETUP;
+				valueSelector = "";
 				break;
 			case SETUP :
 				this.checkOver(x, y);
@@ -287,18 +285,57 @@
 		}
 	}
 
-	protected void	_scroll(float val) {}
+	/**
+	 *	Procédure d'intéraction au scroll de souris.
+	 *
+	 *	in
+	 * x, y	: positions de la souris
+	 * val	: valeur à ajouter, négative vers l'avant de la souris
+	 */
+	protected void	_scroll(int x, int y, float val) {
+		switch (sState) {
+			case SETUP :
+				// Récupère la variable à modifier
+				this.checkOver(x, y);
+				if (setupSelector >= 0)
+					switch (selecMode) {
+						case COLOR :
+							// Cas d'un couleur : augmente la teinte
+							int tmpc = startCOLORS[setupSelector - 2];
+							float tmp = hue(tmpc) - val;
+							tmp = (tmp < 0 ? 200 + tmp : tmp) % 200;
+							startCOLORS[setupSelector - 2] = color(tmp, saturation(tmpc), brightness(tmpc)); // Nouvelle couleur avec la teinte augmentée
+							break;
+						case NUMBER :
+							// Cas d'un nombre : modifie la valeur de -val
+							switch (setupSelector) {
+								case 0 :
+									this.nbIte -= val;
+									if (this.nbIte < 0)
+										this.nbIte = 0;
+									break;
+								case 1 :
+									this.size -= val;
+									break;
+								default :
+									break;
+							}
+							break;
+						default :
+							break;
+					}
+				break;
+			default :
+				break;
+		}
+	}
 
 	protected void	_key(char c) {
 		switch (sState) {
 			case DRAW :
 				if (key == 'p' || key == 'P') {
 					sState = State.SETUP;
-					pgCalc.beginDraw();
-					pgCalc.clear();
-					pgCalc.endDraw();
-					this.setSetup();
-					cBack = BLACK;
+					cBack = cMenu;
 				}
 				/*else if (key == LEFT)
 					preTemplate();
@@ -310,6 +347,7 @@
 					case ENTER : case 'p' : case 'P' :
 						this.refresh();
 						sState = State.DRAW;
+						cBack = BLACK;
 						break;
 					default :
 						break;
@@ -322,12 +360,18 @@
 						sState = State.SETUP;
 						break;
 					case BACKSPACE :
-						if (valueSelector.length() > 0)
-							valueSelector = valueSelector.substring(0, valueSelector.length() - 1);
+						if (valueSelector.length() > 0) {
+							if (ctrl)
+								valueSelector = "";
+							else if ((maj && !tab) || (!maj && tab))
+								valueSelector = valueSelector.substring(1);	
+							else
+								valueSelector = valueSelector.substring(0, valueSelector.length() - 1);	
+						}
 						break;
 					default :
 						if (isValideInpute(c))
-							valueSelector += c;
+							valueSelector = tab ? c + valueSelector : valueSelector + c;
 						break;
 				}
 				break;

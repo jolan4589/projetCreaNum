@@ -10,8 +10,14 @@ Drawable	template; // Template en cours d'utilisation
 selectorMode	selecMode; // Selecteur de mode de modification de variable
 String		valueSelector;	// valeur qui doit remplacer celle choisi
 int			setupSelector; // valeur du selecteur correspondant à la variable à modifier
+boolean		ctrl, maj, tab;
 
-// Enum représentant les états du programme
+/**	Enum représentant les états du programme.
+ *	START		: écran d'acceuil
+ *	DRAWDRAW	: écran de dessin
+ *	SETUP		: écran de paramètre
+ *	CLICKED		: fenêtre de saisie dans les paramètres
+ */
 enum	State {
 	START,
 	DRAW,
@@ -19,14 +25,21 @@ enum	State {
 	CLICKED
 }
 
-// Enum pour les types d'intéractions
+/**	Enum pour les types d'intéractions.
+ *	CLIC	: action de clic droit, gauche et molette
+ *	SCROLL	: action rouller la molette
+ *	KEY		: action d'appuyer sur une touche du clavier
+ */
 enum	interactionType {
 	CLIC,
 	SCROLL,
 	KEY
 }
 
-// Enum pour les types de variables à modifier
+/**	EEnum pour indiquer types de variables à modifier.
+ *	COLOR	: variable homonyme
+ *	NUMBER	: variables int et float
+ */
 enum	selectorMode {
 	COLOR,
 	NUMBER

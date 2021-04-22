@@ -8,6 +8,9 @@ void	setup() {
 	pgGraspCalc = createGraphics(500,100);
 	valueSelector = "";
 	setupSelector = -1;
+	ctrl = false;
+	maj = false;
+	tab = false;
 
 	sState = State.START;
 	cBack = cMenu;
@@ -35,6 +38,10 @@ void	draw() {
 }
 
 void	keyPressed() {
+	if (keyCode == 16)
+		maj = true;
+	else if (keyCode == 17)
+		ctrl = true;
 	switch (sState) {
 		case DRAW : case SETUP : case CLICKED :
 			template.interaction(interactionType.KEY, 0,0, 0, key);
@@ -46,6 +53,15 @@ void	keyPressed() {
 			print("error");
 			break;
 	}
+}
+
+void	keyReleased() {
+	if (keyCode == 16)
+		maj = false;
+	else if (keyCode == 17)
+		ctrl = false;
+	else if (key == TAB)
+		tab = !tab;
 }
 
 void	mouseClicked() {

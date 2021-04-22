@@ -152,3 +152,32 @@ boolean	isValideInpute(char c) {
 		return (true);
 	return false;
 }
+
+/**
+ *	Fonction renvoyant vrai si x et y sont dans le cadre de saisie.
+ */
+boolean	inGraspBox(float x, float y) {
+	return (x >= 0 && x <= width && y >= (height / 2) - (height / 10) && y <= (height / 2) + (height / 10));
+}
+
+/**
+ *	Fonction transformant une couleur en une chaine de caractères de la forme "H S B"
+ */
+String	color2string(color c) {
+	return (hue(c) + " " + saturation(c) + " " + brightness(c));
+}
+
+
+/**
+*	Procédure mettant à jour pgGraspCalc();
+*/
+private void	setGraspCalc() {
+	pgGraspCalc.beginDraw();
+	pgGraspCalc.clear();
+	pgGraspCalc.fill(tab ? WHITE : BLACK);
+	pgGraspCalc.background(tab ? BLACK : WHITE);
+	pgGraspCalc.textSize(16);
+	pgGraspCalc.textAlign(CENTER, CENTER);
+	pgGraspCalc.text(valueSelector, pgGraspCalc.width / 2, pgGraspCalc.height / 2);
+	pgGraspCalc.endDraw();
+}

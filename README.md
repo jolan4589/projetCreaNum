@@ -10,10 +10,13 @@
 ## sélection des valeurs
  Dans le menu, cliquer sur une valeur ouvre une zone de texte qui accepte les formats "\^[0-9]\*$" pour les valeurs numérique et "\^[0-9]\*[, ][0-9]\*[, ][0-9]\*" pour les couleurs.
 
- Cette valeur est saisissable au clavier.
- Une fois la valeur voulu saisie, appuyer sur "entrer" ou cliquer dans la zone de saisie valide la selection, valider une chaîne de caractère vide ou cliquer en dehors de la zone de selection annule la saisie.
+ Cette valeur est saisissable au clavier, seuls les caractères autorisés seront ajoutés.
+ Il est possible d'effacer le dernier caractèrre avec "BACKSPACE", le premier avec "CTRL + BACKSPACE" ou toute la saisie avec "MAJ + BACKSPACE".
+ De même, la touche "TABULATION" permet d'inverser le mode de saisie que se soit pour l'ajout ou la supression de caractère.
+ 
+ Une fois la valeur voulu saisie, appuyer sur "entrer" ou cliquer dans la zone de saisie valide la selection, valider une chaîne de caractère vide ou incorrecte ou cliquer en dehors de la zone de selection annule la saisie.
 
- il est aussi possible de modifier les valeurs en utilisant la molette.
+ Il est aussi possible de modifier les valeurs en utilisant la molette.
  - Dans le cas d'un nombre, sa valeur va augmenter ou diminuer.
  - Dans le cas d'une couleur, sa teinte (hue) va augmenter ou diminuer, pour modifier la saturation et la luminence il faut passer par le selecteur.
 
