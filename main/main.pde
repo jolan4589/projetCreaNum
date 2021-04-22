@@ -1,46 +1,79 @@
 import peasy.*;
 
-Drawable[]	list;
-color		backgroundC;
-int			template;
-PeasyCam	cam;
-
 void	setup() {
 	size(500, 500, P3D);
+	surface.setResizable(true);
 	cam = new PeasyCam(this, 200);
-	colorMode(HSB, 100);
-	backgroundC = color(0,0,100);
+	pgCalc = createGraphics(500,500);
+	pgGraspCalc = createGraphics(500,100);
+	valueSelector = "";
+	setupSelector = -1;
 
-	PVector[] tmp = new PVector[3];
-	tmp[0] = new PVector(50, 50, 50);
-	tmp[1] = new PVector(0, 0, -0);
-	tmp[2] = new PVector(50, 100, -50);
-	float[] tmp2 = new float[3];
-	float[] tmp3 = new float[3];
-	color[] tmp4 = new color[3];
-	tmp2[0] = 80;
-	tmp2[1] = 200;
-	tmp2[2] = 50;
-	tmp3[0] = 0;
-	tmp3[1] = 0;
-	tmp3[2] = 0;
-	tmp4[0] = color(100,0,0);
-	tmp4[1] = color(0,0,0);
-	tmp4[1] = color(0,0,0);
+	sState = State.START;
+	cBack = cMenu;
 
-	list = new Drawable[2];
-	list[0] = new DiskStripe(3, 50, 0.5, color(100, 50, 50), tmp, tmp2, tmp3, tmp4);
-	
-	list[1] = new Bowl();
-
-	template = 1;
+	template = new Sierpinsky3D();
 }
+
 
 void	draw() {
-	background(backgroundC);
-	list[template].draw();
+	background(cBack);
+	switch (sState) {
+		case DRAW :
+			template.draw();
+			break;
+		case SETUP : case CLICKED :
+			template.printSetup();
+			break;
+		case START :
+			startMenu();
+			break;
+		default :
+			print("error");
+			break;
+	}
 }
 
-void	mousePressed() {
-	// template = (template + 1) % 2;
+void	keyPressed() {
+	switch (sState) {
+		case DRAW : case SETUP : case CLICKED :
+			template.interaction(interactionType.KEY, 0,0, 0, key);
+			break;
+		case START :
+			sState = State.DRAW;
+			break;
+		default :
+			print("error");
+			break;
+	}
+}
+
+void	mouseClicked() {
+	switch (sState) {
+		case DRAW :
+			break;
+		case SETUP : case CLICKED :
+			template.interaction(interactionType.CLIC, mouseX, mouseY, 0, '\0');
+			break;
+		case START :
+			sState = State.DRAW;
+			break;
+		default :
+			print("error");
+			break;
+	}
+}
+
+void mouseWheel(MouseEvent event) {
+	float e = event.getCount();
+	switch (sState) { 
+		case DRAW : case START :
+			break;
+		case SETUP :
+			template.interaction(interactionType.SCROLL, mouseX, mouseY, e, '\0');
+			break;
+		default :
+			print("error");
+			break;
+	}
 }
