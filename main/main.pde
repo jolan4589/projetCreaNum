@@ -4,8 +4,8 @@ void	setup() {
 	size(500, 500, P3D);
 	surface.setResizable(true);
 	cam = new PeasyCam(this, 200);
-	pgCalc = createGraphics(500,500);
-	pgGraspCalc = createGraphics(500,100);
+	pgCalc = createGraphics(width,height);
+	pgGraspCalc = createGraphics(width,height);
 	valueSelector = "";
 	setupSelector = -1;
 	ctrl = false;
@@ -15,7 +15,13 @@ void	setup() {
 	sState = State.START;
 	cBack = cMenu;
 
-	template = new Sierpinsky3D();
+	templates = new ArrayList<Drawable>();
+	templateId = 0;
+
+	templates.add(new Sierpinski3D());
+	templates.add(new SierpinskiCube());
+	templates.add(new DiskStripe());
+	templates.add(new Bowl());
 }
 
 
@@ -23,10 +29,10 @@ void	draw() {
 	background(cBack);
 	switch (sState) {
 		case DRAW :
-			template.draw();
+			templates.get(templateId).draw();
 			break;
 		case SETUP : case CLICKED :
-			template.printSetup();
+			templates.get(templateId).printSetup();
 			break;
 		case START :
 			startMenu();
@@ -42,9 +48,19 @@ void	keyPressed() {
 		maj = true;
 	else if (keyCode == 17)
 		ctrl = true;
+	else if (key == TAB)
+		tab = !tab;
 	switch (sState) {
-		case DRAW : case SETUP : case CLICKED :
-			template.interaction(interactionType.KEY, 0,0, 0, key);
+		case DRAW :
+			if (keyCode == LEFT)
+				nextTemplate();
+			else if (keyCode == RIGHT)
+				preTemplate();
+			else
+				templates.get(templateId).interaction(interactionType.KEY, 0,0, 0, key);
+			break;
+		case SETUP : case CLICKED :
+			templates.get(templateId).interaction(interactionType.KEY, 0,0, 0, key);
 			break;
 		case START :
 			sState = State.DRAW;
@@ -60,8 +76,6 @@ void	keyReleased() {
 		maj = false;
 	else if (keyCode == 17)
 		ctrl = false;
-	else if (key == TAB)
-		tab = !tab;
 }
 
 void	mouseClicked() {
@@ -69,7 +83,7 @@ void	mouseClicked() {
 		case DRAW :
 			break;
 		case SETUP : case CLICKED :
-			template.interaction(interactionType.CLIC, mouseX, mouseY, 0, '\0');
+			templates.get(templateId).interaction(interactionType.CLIC, mouseX, mouseY, 0, '\0');
 			break;
 		case START :
 			sState = State.DRAW;
@@ -86,7 +100,7 @@ void mouseWheel(MouseEvent event) {
 		case DRAW : case START :
 			break;
 		case SETUP :
-			template.interaction(interactionType.SCROLL, mouseX, mouseY, e, '\0');
+			templates.get(templateId).interaction(interactionType.SCROLL, mouseX, mouseY, e, '\0');
 			break;
 		default :
 			print("error");

@@ -3,7 +3,7 @@ Projet réalisé par RIALLOT JOLAN et DUONG ANTOINE.
 # Explications générales
 
  - Une fois le programme lancé, il suffit d'intéragir en cliquant avec la souris ou pressant une touche du clavier pour que l'affichage commence.
- - Le programme commence par afficher Sierpinsky3D.
+ - Le programme commence par afficher Sierpinski3D.
  - Il est possible de naviguer entre les projets implémentés avec les flèches gauche et droite.
  - En appuyant sur "p" le menu de paramètre du projet s'ouvre
  - Pour quiter le menu il suffit d'appuyer sur "p" ou "entrer"
@@ -23,4 +23,4 @@ Projet réalisé par RIALLOT JOLAN et DUONG ANTOINE.
  - Dans le cas d'une couleur, sa teinte (hue) va augmenter ou diminuer, pour modifier la saturation et la luminence il faut passer par le selecteur.
 
 ## Projets implémentés :
- - Sierpinsky3D avec interpolation de couleurs.
+ - Sierpinski3D avec interpolation de couleurs.

@@ -13,7 +13,7 @@ void	startMenu() {
 	pgCalc.text("RIALLOT JOLAN ET DUONG ANTOINE", pgCalc.width/2, pgCalc.height/(nlines + 1) * 2);
 	pgCalc.text("LEFT RIGHT POUR CHANGER DE MODE", pgCalc.width/2, pgCalc.height/(nlines + 1) * 3);
 	pgCalc.text("APPUYER SUR P POUR OUVRIR LES PARAMETRES", pgCalc.width/2, pgCalc.height/(nlines + 1) * 4);
-	pgCalc.text("CLIC + CLAVIER, UP DOWN, MOLETTE POUR LES PARAMETRES", pgCalc.width/2, pgCalc.height/(nlines + 1) * 5);
+	pgCalc.text("LIRE LE READ ME POUR PLUS DE DETAILS", pgCalc.width/2, pgCalc.height/(nlines + 1) * 5);
 	pgCalc.text("CLIQUER OU APPUYER SUR UNE TOUCHE POUR CONTINUER", pgCalc.width/2, pgCalc.height/(nlines + 1) * 6);
 	pgCalc.endDraw();
 	blend(pgCalc, 0,0, pgCalc.width,pgCalc.height, 0,0, width,height, SUBTRACT);
@@ -106,12 +106,18 @@ void	pyramid(PVector p1, PVector p2, PVector p3, PVector p4) {
  *
  *	out	: indice du point premier point le plus haut de la liste
  */
-int	findTop(PVector[] pts) {
+int		findTop(PVector[] pts) {
 	int	top = 0;
 	for (int i = 1; i < pts.length	; i++)
 		if (pts[i].z > pts[top].z)
 			top = i;
 	return (top);
+}
+
+PVector	findPyramidCenter(PVector[] pts) {
+	PVector	midBase = PVector.lerp(pts[0], pts[1], 0.5);
+	PVector	mid = PVector.lerp(midBase, pts[2], 1/3);
+	return(PVector.lerp(mid, pts[3], 1/3));
 }
 
 /**
@@ -171,7 +177,7 @@ String	color2string(color c) {
 /**
 *	Procédure mettant à jour pgGraspCalc();
 */
-private void	setGraspCalc() {
+void	setGraspCalc() {
 	pgGraspCalc.beginDraw();
 	pgGraspCalc.clear();
 	pgGraspCalc.fill(tab ? WHITE : BLACK);
@@ -180,4 +186,41 @@ private void	setGraspCalc() {
 	pgGraspCalc.textAlign(CENTER, CENTER);
 	pgGraspCalc.text(valueSelector, pgGraspCalc.width / 2, pgGraspCalc.height / 2);
 	pgGraspCalc.endDraw();
+}
+
+/**
+ *	Procédure modifiant la valeur de valueSelector.
+ *
+ *	in
+ * c	: Caractère traité pour modifier la chaîne de caractères.
+ */
+void	changeValueSelector(char c) {
+	switch (c) {
+		case BACKSPACE :
+			if (valueSelector.length() > 0) {
+				if (ctrl) // Supression totale.
+					valueSelector = "";
+				else if ((maj && !tab) || (!maj && tab)) // Supression du premier caractère.
+					valueSelector = valueSelector.substring(1);	
+				else // Supression du dernier caractère.
+					valueSelector = valueSelector.substring(0, valueSelector.length() - 1);	
+			}
+			break;
+		default :
+			if (isValideInpute(c)) // Ajoute d'un caractère.
+				valueSelector = tab ? c + valueSelector : valueSelector + c;
+			break;
+	}
+}
+
+void	nextTemplate() {
+	templateId++;
+	templateId %= templates.size();
+}
+
+void	preTemplate() {
+	templateId--;
+	while (templateId < 0)
+		templateId = templates.size() + templateId;
+	templateId %= templates.size();
 }

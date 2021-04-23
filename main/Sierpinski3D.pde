@@ -1,4 +1,4 @@
-  public class	Sierpinsky3D extends Drawable {
+  public class	Sierpinski3D extends Drawable {
 	
 	private int		nbIte;			 // nombre de recursions positif ou nul, 0 -> 1 pyramide, 1 -> 4 pyramides, ...
 	private int		_posInAllTab;	// position, dans le tableau général, de la pyramide en construction
@@ -11,7 +11,7 @@
 		
 	// Custructor
 
-	public	Sierpinsky3D() {
+	public	Sierpinski3D() {
 		build(2, 200, randomColor(), randomColor(), randomColor(), randomColor());
 	}
 
@@ -66,12 +66,12 @@
 	 * pts	: sommets de la pyramide courrante
 	 * n	: degré de récursion courrant 0 étant le cas d'arrêt
 	 */
-	private void	findSierpinsky3DPoints(PVector[] pts, int n) {
+	private void	findSierpinski3DPoints(PVector[] pts, int n) {
 		// Fin de recursion.
 		if (n <= 0) {
 			arrayCopy(pts, this._allPoints[this._posInAllTab]);
 			// TODO : faire l'interpolation sur le centre au lieu du haut
-			this._allColors[_posInAllTab] = this.interpolPyramidColor(pts[findTop(pts)]);
+			this._allColors[_posInAllTab] = this.interpolPyramidColor(findPyramidCenter(pts));
 			this._posInAllTab++;
 		}
 		// Continuite de recursion.
@@ -83,7 +83,7 @@
 				tmp[1] = mid2pts(pts[i], pts[(i + 1) % 4]);
 				tmp[2] = mid2pts(pts[i], pts[(i + 2) % 4]);
 				tmp[3] = mid2pts(pts[i], pts[(i + 3) % 4]);
-				findSierpinsky3DPoints(tmp, n - 1); // Appel recursif sur la sous pyramide.
+				this.findSierpinski3DPoints(tmp, n - 1); // Appel recursif sur la sous pyramide.
 			}
 		}
 	}
@@ -96,8 +96,8 @@
 	 *	5	6
 	 */
 	private void	checkOver(float x, float y) {
-		float nx = width / 4, ny = height / 6;
-		float nx2 = nx / 2;
+		float	nx = width / 4, ny = height / 6;
+		float	nx2 = min(nx, ny) / 2;
 
 		x = lerp(0, pgCalc.width, x / width);
 		y = lerp(0, pgCalc.height, y / height);
@@ -134,10 +134,10 @@
 	}
 
 	/**
-	 *	Procédure affichant le menu de Sierpinsky
+	 *	Procédure affichant le menu de Sierpinski
 	 */
 	public void	printSetup() {
-		float nx = width / 4, ny = height / 6;
+		float	nx = width / 4, ny = height / 6;
 		this.setSetup(); // mise à jour du graphique
 
 		if (sState == State.CLICKED) {
@@ -172,14 +172,17 @@
 		// Creation des tableaux globaux.
 		this._allPoints = new PVector[(int)pow(4, this.nbIte)][4];
 		this._allColors = new color[(int)pow(4, this.nbIte)];
-		this.findSierpinsky3DPoints(this._startPTS, this.nbIte);
+
+		// remplissage des tableaux.
+		this.findSierpinski3DPoints(this._startPTS, this.nbIte);
 	}
 
 	/**
 	 * Procédure mettant a jour l'affichage du menu
 	 */
 	protected void	setSetup() {
-		float nx = pgCalc.width / 4, ny = pgCalc.height / 6;
+		float	nx = pgCalc.width / 4, ny = pgCalc.height / 6;
+		float	nsize = min(nx, ny);
 
 		if (pgCalc.width != width || pgCalc.height != height)
 			pgCalc = createGraphics(width, height); // Nouveau graphique à la bonne taille
@@ -206,7 +209,7 @@
 		 */
 		for (int i = 0; i < 4; i++) {
 			pgCalc.fill(this.startCOLORS[i]);
-			pgCalc.rect((2 * floor(i % 2) + 1) * nx, 2 * ny + (2 * floor(i / 2) + 1) * ny, ny, ny);
+			pgCalc.rect((2 * floor(i % 2) + 1) * nx, 2 * ny + (2 * floor(i / 2) + 1) * ny, nsize, nsize);
 		}
 		pgCalc.endDraw();
 	}
@@ -215,19 +218,19 @@
 	 *	Procédure sauvegardant valueSelector dans la variable correspodnante.
 	 */
 	protected void	saveValue() {
-		float i = 0;
-		color c = color(BLACK);
+		float	i = 0;
+		color	c = BLACK;
 
 		// Cast valueSelector dans le bon type.
 		if (selecMode == selectorMode.NUMBER) {
 			i = float(valueSelector);
 		}
 		else {
-			IntList 	tab = new IntList();
-			String[] tmptab = split(valueSelector, " "); // Séparation des espaces
+			FloatList 	tab = new FloatList();
+			String[]	tmptab = split(valueSelector, " "); // Séparation des espaces
 
 			for (String w : tmptab)
-				tab.append(int(split(w, ","))); // Séparation des virgules
+				tab.append(float(split(w, ","))); // Séparation des virgules
 			
 			if (tab.size() != 3) {
 				valueSelector = "";
@@ -280,7 +283,7 @@
 					sState = State.CLICKED;
 				break;
 			default :
-				print("error switch _clic in Sierpinsky3D\n");
+				print("error switch _clic in Sierpinski3D\n");
 				break;
 		}
 	}
@@ -337,10 +340,6 @@
 					sState = State.SETUP;
 					cBack = cMenu;
 				}
-				/*else if (key == LEFT)
-					preTemplate();
-				else if (key == RIGHT)
-					nextTemplate();*/
 				break;
 			case SETUP :
 				switch (c) {
@@ -359,19 +358,8 @@
 						this.saveValue();
 						sState = State.SETUP;
 						break;
-					case BACKSPACE :
-						if (valueSelector.length() > 0) {
-							if (ctrl)
-								valueSelector = "";
-							else if ((maj && !tab) || (!maj && tab))
-								valueSelector = valueSelector.substring(1);	
-							else
-								valueSelector = valueSelector.substring(0, valueSelector.length() - 1);	
-						}
-						break;
 					default :
-						if (isValideInpute(c))
-							valueSelector = tab ? c + valueSelector : valueSelector + c;
+						changeValueSelector(c);
 						break;
 				}
 				break;
