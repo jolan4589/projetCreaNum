@@ -23,4 +23,7 @@ Projet réalisé par RIALLOT JOLAN et DUONG ANTOINE.
  - Dans le cas d'une couleur, sa teinte (hue) va augmenter ou diminuer, pour modifier la saturation et la luminence il faut passer par le selecteur.
 
 ## Projets implémentés :
- - Sierpinski3D avec interpolation de couleurs.
+ - Sierpinski3D avec interpolation de couleurs et menu.
+ - Sierpinski3D version cube avec interpolation de couleur et menu.
+ - DiskStripe (objet ouvert rayé) avec couleur uni et sans menu.
+ - Bawl (objet fermé) avec interpolation de couleur et sans menu.
